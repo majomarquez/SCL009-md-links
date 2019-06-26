@@ -17,19 +17,19 @@ const path = require('path');
     }
     })
 
-//   const markdown = fs.readFileSync('README.md').toString();
-//   const links = markdownLinkExtractor(markdown);
-//   links.forEach(function (infoLinks) {
-//     fetch(infoLinks)
-//       .then((res) => {
-//         if (res.ok){
-//           console.log ("This Link is Working status : "+ res.status + " " + res.url )
-//         }
-//       })
-//       .catch(error => {
-//         console.log ("Error Catched FIXME!!  " + error.message)
-//       })
-// })
+  const markdown = fs.readFileSync('README.md').toString();
+  const links = markdownLinkExtractor(markdown);
+  links.forEach(function (infoLinks) {
+    fetch(infoLinks)
+      .then((res) => {
+        if (res.ok){
+          console.log ("This Link is Working status : "+ res.status + " " + res.url )
+        }
+      })
+      .catch(error => {
+        console.log ("Error Catched FIXME!!  " + error.message)
+      })
+})
 
 
 // exports.readAFile= readAFile;
