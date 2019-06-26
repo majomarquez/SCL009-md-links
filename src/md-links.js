@@ -3,7 +3,7 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const markdownLinkExtractor = require('markdown-link-extractor');
 const path = require('path');
-// const chalk = require('chalk')
+const chalk = require('chalk')
 
 // const read = fs.readFileSync ("./Readme.md")// version sincrona de leer un archivo por su ruta
 // console.log(read)
@@ -23,11 +23,11 @@ const path = require('path');
     fetch(infoLinks)
       .then((res) => {
         if (res.ok){
-          console.log ("This Link is Working status : "+ res.status + " " + res.url )
+          console.log (chalk.magenta("This Link is Working status : ") + chalk.cyan (res.status + " " + res.url) )
         }
       })
       .catch(error => {
-        console.log ("Error Catched FIXME!!  " + error.message)
+        console.log ((chalk.yellow ("ERROR CATCHED FIXME!!  ")) + chalk.red(error.message));
       })
 })
 
