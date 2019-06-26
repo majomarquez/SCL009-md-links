@@ -1,4 +1,17 @@
 {
   "name": "md-links",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "filehound": "^1.17.0",
+    "markdown-link-extractor": "^1.2.1",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.0.0",
+    "jest": "^24.8.0"
+  },
+  "bin": {
+    "md-links": "index.js"
+  }
 }
