@@ -1,73 +1,83 @@
 "use strict"
 const fs = require('fs');
-const fetch = require('node-fetch');
-const markdownLinkExtractor = require('markdown-link-extractor');
+const marked =require('marked')
 const path = require('path');
 const chalk = require('chalk')
-
-// const read = fs.readFileSync ("./Readme.md")// version sincrona de leer un archivo por su ruta
-// console.log(read)
-
-// declaracion de la promesa
-// const read = (fileName, type)=>{   //tomo la funcion declarada que tiene dos parametros 
-//   return new Promise ((resolve,reject)=>{       //   le digo quelafuncion va a retornar una promesa
-//     fs.readFile(fileName, type ,(error, content) =>{   //llamo a la funcion de filesystem
-
-//     if (error) {
-//       reject(error)
-//     }
-//     else {
-//       resolve(content) ;
-//     }
-//   });
-// });
-// }
-
-// //  llamada de la promesa
-// let paths= process.argv[2]
-// console.log( paths);
-//  read(paths, "utf-8")
-//   .then(res => {
-//     console.log(res)
-//   })
-//   .catch (err=>{
-//     console.log (err);
-//   })
+const FileHound = require('filehound');
 
 
-// Promise.all([read(path, "utf-8")]) //le paso cada una de las declaaraciones de promesas separadas por coma y deuelve una promesa
-// .then(res=>{
-//   console.log(res[1]);// solome da la respuesta de la promesa numero 1 en este caso readfile
-// })
-// .catch (err=>{
-//   console.log (err);
-// })
+const mdLinks = (path) => {
+  // return new Promise((resolve, reject) => {
+    fs.stat(path, (error,stats ) => {
+        if (error) {
+          return reject(error.message);
+        }
+         if (stats.isDirectory()) {
+          directories(path)
+          .then(fileMd=>{
+            fileMd.forEach(links => {
+              resolve(read(links));
+              console.log("console de mdlinks directory",read(links))
+            });
+          })
+          .catch(err=>{
+            reject(error)
+          })
+        }
+    })
+        if (stats.isFile()) {
+          read(path)
+          .then(res => {
+              resolve(res);
+          })
+          .catch(err => {
+              reject(err);
+          });
+        }
+  // })
+}
+      
+// si es directorio
 
-
-const read = fs.readFile("./Readme.md", "utf-8",(error,datos) => { // se agrega la funcion con 3 parametros , el primero es de error y el segundo la forma en que vere el archivo y el tercero si hay un error
-  if (error) {
-    reject(error)
-  }
-  else {
-    console.log("En el Archivo solicitado se encuentran los siguientes Links:") 
-  }
-  })
-
-const markdown = fs.readFileSync('README.md').toString();
-const links = markdownLinkExtractor(markdown);
-links.forEach(function (infoLinks) {
-  fetch(infoLinks)
-    .then((res) => {
-      if (res.ok){
-        console.log (chalk.magenta("This Link is Working status : ") + chalk.yellow (res.status) + " " + chalk.cyan (res.url) )
+  const directories = (pathToFile) => {
+    return new Promise((resolve, reject) => {
+      FileHound.create()
+        .paths(pathToFile)
+        .ext('md')
+        .find() 
+          .then(files => {
+            resolve(files);
+            console.log("console de directory", files)
+        })
+        .catch(error=>{
+          reject(error)
+        })
+        });
       }
-    })
-    .catch(error => {
-      console.log ((chalk.yellow ("ERROR CATCHED FIXME!!  ")) + chalk.red(error.message));
-    })
-})
+  // si fuera un md
+  const read = (fileName)=>{   //tomo la funcion declarada que tiene dos parametros 
+    // return new Promise ((resolve,reject)=>{       //   le digo quela funcion va a retornar una promesa
+      fs.readFile(fileName, "utf-8" ,(error, content) =>{   //llamo a la funcion de filesystem
+        if (error){
+          throw(error)
+        }
+        let link = [];
+        const renderer = new marked.Renderer();
+        renderer.links = (href, title, text)=> {
+          links.push({
+            href:href,
+            text:text,
+            file:fileName 
+          });
+        };
+        marked(content,{renderer:renderer});
+        // resolve(links);   
+        console.log("resultado de links" , links)
+      
+      });
+    // });//fin de promesa
+  };
+  
 
 
-// // exports.readAFile= readAFile;
-// // exports.readFilesAndExtractLinks=readFilesAndExtractLinks;
-
+module.exports = mdLinks;
