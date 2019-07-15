@@ -1,8 +1,7 @@
 "use strict"
 const fs = require('fs');
 const marked =require('marked')
-// const path = require('path');
-// const chalk = require('chalk')
+const chalk = require('chalk')
 const FileHound = require('filehound');
 const fetch = require('node-fetch');
 
@@ -18,7 +17,7 @@ const mdLinks = (path) => {
           .then(fileMd=>{
             fileMd.forEach(element => {
               resolve(read(element));
-              console.log("console de mdlinks directory",read(element))
+              
             });
           })
           .catch(err=>{
@@ -50,7 +49,7 @@ const mdLinks = (path) => {
         .find() 
           .then(files => {
             resolve(files);
-            console.log("console de directory", files)
+            
         })
         .catch(error=>{
           reject(error)
@@ -75,9 +74,10 @@ const mdLinks = (path) => {
         };
         marked(content,{renderer:renderer});
          resolve(links);   
-         fetchLinks(links)
+         fetchLinks(links);
+         console.log("nuevo total"+links.length)
 
-        console.log("resultado de links" , links)
+        // console.log(links)
       
       });
      });//fin de promesa
@@ -87,19 +87,21 @@ const fetchLinks =(links=>{
 links.map (urlLink=>{
   fetch(urlLink)
   .then(res => {
-    console.log("url ok", res.url);
-      console.log("uno ok", res.ok);
-      console.log("dos ok", res.status);
-      console.log("tres ok", res.statusText);
+    console.log(chalk.magenta( "Web:", res.url));
+      console.log(chalk.cyan("this Link is Working "));
+      console.log(chalk.cyan("His status is", res.status +" "+ res.statusText));
+      
 })
   .catch (error =>{
     if (error.code==='ENOTFOUND') {
-      console.log ( error.message)
+      console.log (chalk.yellow ("This link is not working... FIX IT!! ")) 
+      console.log (chalk.red (error.message))
     }
-     
   })
-
 })
+});
 
-  });
+
+
+ 
 module.exports = mdLinks;
