@@ -1,6 +1,6 @@
 {
   "name": "md-linksmjm",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "dependencies": {
     "chalk": "^2.4.2",
     "filehound": "^1.17.1",

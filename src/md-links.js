@@ -1,21 +1,21 @@
 "use strict"
-const fs = require('fs');
+const fs = require('fs'); 
 const marked =require('marked')
 const chalk = require('chalk')
 const FileHound = require('filehound');
 const fetch = require('node-fetch');
 
-
-const mdLinks = (path) => {
-  return new Promise((resolve, reject) => {
-    fs.stat(path, (error,stats ) => {
+// md link  con parametro de ruta
+const mdLinks = (path) => {  
+  return new Promise((resolve, reject) => { //devuelve una promesa 
+    fs.stat(path, (error,stats ) => {        // metodo stat indica si es un archivo o directorio
         if (error) {
           return reject(error.message);
         }
-         if (stats.isDirectory()) {
-          directories(path)
-          .then(fileMd=>{
-            fileMd.forEach(element => {
+         if (stats.isDirectory()) {     //si stat es directorio
+          directories(path)               // si es directorio llamo a filhound y elresultado se lo paso a readfile(read)
+          .then(fileMd=>{          //
+            fileMd.forEach(element => {  // element devuelve un arreglo con url y se las doy como parametro al read
               resolve(read(element));
               
             });
@@ -25,8 +25,8 @@ const mdLinks = (path) => {
           })
         }
 // si es un archivo
-        if (stats.isFile()) {
-          read(path)
+        if (stats.isFile()) {  // si fuera  un archivo llama a read file (read)
+          read(path)           
           .then(files => {
               resolve(files);
           })
@@ -41,7 +41,7 @@ const mdLinks = (path) => {
       
 // si es directorio
 
-  const directories = (pathToFile) => {
+  const directories = (pathToFile) => { //promesa que retorna el metodo filehound cuyo resultado le pasare a read
     return new Promise((resolve, reject) => {
       FileHound.create()
         .paths(pathToFile)
@@ -57,14 +57,14 @@ const mdLinks = (path) => {
         });
       }
   // si fuera un md
-  const read = (fileName)=>{   //tomo la funcion declarada que tiene dos parametros 
+  const read = (fileName)=>{   //tomo la funcion declarada 
      return new Promise ((resolve,reject)=>{       //   le digo quela funcion va a retornar una promesa
       fs.readFile(fileName, "utf-8" ,(error, content) =>{   //llamo a la funcion de filesystem
         if (error){
           throw(error)
         }
         let links = [];
-        const renderer = new marked.Renderer();
+        const renderer = new marked.Renderer(); 
         renderer.link = (href, title, text)=> {
           links.push({
             href:href,
